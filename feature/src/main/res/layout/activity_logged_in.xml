@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LLoggedIn"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.gebruiker.quiznativeapp.feature.LoggedIn">
+    <include
+        layout = "@layout/actionbar_mainactivity"
+        android:id="@+id/actionbar"
+        />
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/frgOptieLijst"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimaryDark"
+        android:visibility="gone"
+
+        tools:context="com.example.gebruiker.quiznativeapp.feature.OptieLijst">
+
+        <!-- TODO: Update blank fragment layout -->
+
+        <Button
+            android:id="@+id/btnHighscores"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/highscores"
+            android:background="@color/colorPrimaryDark"
+            />
+
+
+        <Button
+            android:id="@+id/btnProfiel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/profiel"
+            android:layout_marginTop="50dp"
+            android:background="@color/colorPrimaryDark"/>
+        <Button
+            android:id="@+id/btnUitLoggen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/log_uit"
+            android:layout_marginTop="100dp"
+            android:background="@color/colorPrimaryDark" />
+
+    </RelativeLayout>
+    <Button
+        android:id="@+id/btnOpties"
+        android:layout_width="189dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="150dp"
+        android:text="@string/opties"
+        app:layout_constraintBottom_toTopOf="@+id/btnSpelen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnSpelen"
+        android:layout_width="190dp"
+        android:layout_height="46dp"
+        android:layout_marginBottom="200dp"
+        android:text="@string/spelen"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnOpties" />
+</android.support.constraint.ConstraintLayout>
