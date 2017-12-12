@@ -10,12 +10,16 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.StringRequestListener;
 
 
 import java.util.Arrays;
@@ -37,15 +41,15 @@ public class Quiz extends AppCompatActivity {
     private RadioButton Keuze3;
     private RadioButton Keuze4;
     private String getVraagURL = "http://inifruits.be/php/quizVraag.php";
-    RequestQueue requestVraag;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
-
-        requestVraag = Volley.newRequestQueue(this);
+        AndroidNetworking.initialize(getApplicationContext());
+        //final RequestQueue requestVraag = Volley.newRequestQueue(this);
 
         VolgendeVraag = findViewById(R.id.btnVolgendeVraag);
         VraagNummer = findViewById(R.id.lblVraagCount);
@@ -86,17 +90,48 @@ public class Quiz extends AppCompatActivity {
             Keuze3.setVisibility(View.VISIBLE);
             Keuze4.setVisibility(View.VISIBLE);
             getQuestion();
+            //getQuestion(_requestVraag);
         }else{
             if(VraagTeller < 15){
                 if(VraagTeller == 14){
 
                 }
                 getQuestion();
+                //getQuestion(_requestVraag);
             }
         }
     }
 
     private void getQuestion()
+    {
+        AndroidNetworking.post(getVraagURL)
+                .addBodyParameter("volgendeVraag", gebruikteVragen)
+                .addBodyParameter("categorie", Categorie.Categorie)
+                .setTag("test")
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.i("Succes", response);
+                        List<String> responeSplit = Arrays.asList(response.split(";"));
+                        gebruikteVragen += ";" + responeSplit.get(0);
+                        VraagNummer.setText(Vraag + String.valueOf(++VraagTeller));
+                        Vraag.setText(responeSplit.get(0));
+                        Keuze1.setText(responeSplit.get(1));
+                        Keuze2.setText(responeSplit.get(2));
+                        Keuze3.setText(responeSplit.get(3));
+                        Keuze4.setText(responeSplit.get(4));
+                        JuistAntwoord = responeSplit.get(5);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Log.i("Fail", anError.toString());
+                    }
+                });
+    }
+
+    /*private void getQuestion(RequestQueue _requestVraag)
     {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, getVraagURL, new Response.Listener<String>() {
             @Override
@@ -126,8 +161,13 @@ public class Quiz extends AppCompatActivity {
                 return params;
             }
         };
-        requestVraag.add(stringRequest);
-    }
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                100000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        _requestVraag.add(stringRequest);
+
+    }*/
 
     private void Start()
     {

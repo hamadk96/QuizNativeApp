@@ -29,4 +29,5 @@ dependencies {
     implementation project(':base')
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.volley:volley:1.0.0'
+    compile 'com.amitshekhar.android:android-networking:1.0.0'
 }
