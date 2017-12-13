@@ -6,12 +6,15 @@ Heeft een OptieLijst menu dat initieel onzichtbaar/gone is.
 
 package com.example.gebruiker.quiznativeapp.feature;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class LoggedIn extends AppCompatActivity {
 
@@ -20,6 +23,7 @@ public class LoggedIn extends AppCompatActivity {
     Button ProfielButton;
     Button HighscoresButton;
     Button LogUitButton;
+    TextView Welkom;
     View LoggedView;
     RelativeLayout OptieLijst;
     boolean IsButtonOptiesClicked = false;
@@ -30,6 +34,10 @@ public class LoggedIn extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logged_in);
+        Welkom = findViewById(R.id.lblWelkom);
+        String WelkomBericht = "Welkom "+(Gebruiker.substring(0,1).toUpperCase() + Gebruiker.substring(1).toLowerCase());
+        Welkom.setText(WelkomBericht);
+
 
         //Clickevent van de "Opties" Button
         OptiesButton = findViewById(R.id.btnOpties);
@@ -94,5 +102,41 @@ public class LoggedIn extends AppCompatActivity {
                 startActivity(new Intent(LoggedIn.this,MainActivity.class));
             }
         });
+
+
+
+    }
+    @Override
+    public void onBackPressed() {
+
+
+        alertDialog();
+    }
+
+    private void alertDialog()
+    {
+        AlertDialog.Builder AlertDialog = new AlertDialog.Builder(this);
+        AlertDialog.setTitle("Opgelet!");
+        AlertDialog.setMessage("Weet je zeker dat je wilt uitloggen?");
+        AlertDialog.setPositiveButton(
+                "Ja",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        LoggedIn.super.onBackPressed();
+                    }
+                }
+        );
+        AlertDialog.setNegativeButton(
+                "Nee",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }
+        );
+        AlertDialog ShowDialog = AlertDialog.create();
+        ShowDialog.show();
     }
 }

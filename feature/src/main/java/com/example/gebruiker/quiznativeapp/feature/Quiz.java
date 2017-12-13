@@ -1,8 +1,13 @@
 package com.example.gebruiker.quiznativeapp.feature;
 
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Looper;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,7 +26,6 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +33,8 @@ import java.util.Map;
 
 public class Quiz extends AppCompatActivity {
 
-    private String gebruikteVragen = "";
-    private int VraagTeller = 0;
+    private String gebruikteVragen = "random";
+    private Integer VraagTeller = 0;
     private String JuistAntwoord = "";
     private int Score = 0;
     private Button VolgendeVraag;
@@ -44,12 +48,13 @@ public class Quiz extends AppCompatActivity {
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
-        AndroidNetworking.initialize(getApplicationContext());
-        //final RequestQueue requestVraag = Volley.newRequestQueue(this);
+
+        final RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         VolgendeVraag = findViewById(R.id.btnVolgendeVraag);
         VraagNummer = findViewById(R.id.lblVraagCount);
@@ -60,62 +65,88 @@ public class Quiz extends AppCompatActivity {
         Keuze4 = findViewById(R.id.rbnKeuze4);
 
         Start();
+        radioButtons();
 
+        //onClickListener voor button
         VolgendeVraag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                volgendeVraag();
+                volgendeVraag(requestQueue);
             }
         });
 
-
-
+        Toolbar toolbar = findViewById(R.id.actionbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog("Opgelet!","Weet je zeker dat je wilt stoppen?");
+            }
+        });
     }
-    private void volgendeVraag()
+
+    //Methode om naar volgende vraag te gaan
+    private void volgendeVraag(final RequestQueue requestQueue)
     {
         RadioButton[] keuze = new RadioButton[4];
         keuze[0] = Keuze1;
         keuze[1] = Keuze2;
         keuze[2] = Keuze3;
         keuze[3] = Keuze4;
+
+
+
         for(RadioButton b : keuze){
-            if(b.getText().toString() == JuistAntwoord && b.isChecked()){
+            String GekozenAntwoord = b.getText().toString();
+
+            if(GekozenAntwoord.equals(JuistAntwoord) && b.isChecked()){
                 Score++;
+                Log.i("Juist", JuistAntwoord);
             }
         }
+
+
         if(VraagTeller == 0){
+
             Keuze1.setVisibility(View.VISIBLE);
             Keuze2.setVisibility(View.VISIBLE);
             Keuze3.setVisibility(View.VISIBLE);
             Keuze4.setVisibility(View.VISIBLE);
-            getQuestion();
-            //getQuestion(_requestVraag);
+            VolgendeVraag.setText("Volgendre vraag");
+
+            getQuestion(requestQueue);
         }else{
             if(VraagTeller < 15){
                 if(VraagTeller == 14){
+                    VolgendeVraag.setText("Einde");
 
                 }
-                getQuestion();
-                //getQuestion(_requestVraag);
+
+                getQuestion(requestQueue);
+            }
+            else{
+                alertDialog(false);
             }
         }
+
     }
 
-    private void getQuestion()
+    //Vraag en bijhorende antwoorden opvragen bij de server
+    private void getQuestion(final RequestQueue requestQueue)
     {
-        AndroidNetworking.post(getVraagURL)
-                .addBodyParameter("volgendeVraag", gebruikteVragen)
-                .addBodyParameter("categorie", Categorie.Categorie)
-                .setTag("test")
-                .build()
-                .getAsString(new StringRequestListener() {
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.POST,
+                getVraagURL,
+                new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.i("Succes", response);
                         List<String> responeSplit = Arrays.asList(response.split(";"));
                         gebruikteVragen += ";" + responeSplit.get(0);
-                        VraagNummer.setText(Vraag + String.valueOf(++VraagTeller));
+                        ++VraagTeller;
+                        VraagNummer.setText("Vraag " + VraagTeller.toString());
                         Vraag.setText(responeSplit.get(0));
                         Keuze1.setText(responeSplit.get(1));
                         Keuze2.setText(responeSplit.get(2));
@@ -123,36 +154,15 @@ public class Quiz extends AppCompatActivity {
                         Keuze4.setText(responeSplit.get(4));
                         JuistAntwoord = responeSplit.get(5);
                     }
-
+                },
+                new Response.ErrorListener() {
                     @Override
-                    public void onError(ANError anError) {
-                        Log.i("Fail", anError.toString());
-                    }
-                });
-    }
+                    public void onErrorResponse(VolleyError error) {
+                        alertDialog(true);
 
-    /*private void getQuestion(RequestQueue _requestVraag)
-    {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, getVraagURL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.i("Succes", response);
-                List<String> responeSplit = Arrays.asList(response.split(";"));
-                gebruikteVragen += ";" + responeSplit.get(0);
-                VraagNummer.setText(Vraag + String.valueOf(++VraagTeller));
-                Vraag.setText(responeSplit.get(0));
-                Keuze1.setText(responeSplit.get(1));
-                Keuze2.setText(responeSplit.get(2));
-                Keuze3.setText(responeSplit.get(3));
-                Keuze4.setText(responeSplit.get(4));
-                JuistAntwoord = responeSplit.get(5);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.i("Fail", error.toString());
-            }
-        }){
+                    }
+                }
+        ){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
@@ -161,20 +171,114 @@ public class Quiz extends AppCompatActivity {
                 return params;
             }
         };
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                100000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        _requestVraag.add(stringRequest);
+        requestQueue.add(stringRequest);
+    }
 
-    }*/
+    //Zorgt dat als één radioButton geslecteerd is de andere niet geslecteerd zijn
+    private void radioButtons()
+    {
+        Keuze1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Keuze2.setChecked(false);
+                Keuze3.setChecked(false);
+                Keuze4.setChecked(false);
+            }
+        });
+        Keuze2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Keuze1.setChecked(false);
+                Keuze3.setChecked(false);
+                Keuze4.setChecked(false);
+            }
+        });
+        Keuze3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Keuze1.setChecked(false);
+                Keuze2.setChecked(false);
+                Keuze4.setChecked(false);
+            }
+        });
+        Keuze4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Keuze1.setChecked(false);
+                Keuze2.setChecked(false);
+                Keuze3.setChecked(false);
+            }
+        });
+    }
+
+    //Dialoogscherm pakt één parameter
+    //parameter wordt gebruikt om te zien of het voor een error is
+    //Als het false is wordt de dialoogscherm gebruikt om de score te laten op het einde
+    private void alertDialog(Boolean isError)
+    {
+        AlertDialog.Builder AlertDialog = new AlertDialog.Builder(this);
+        AlertDialog.setTitle(isError ? "Oops" : "Score!");
+        AlertDialog.setMessage(isError ? "Er is een probleem met de connectie." : "Je score: "+ Score + "/15");
+        AlertDialog.setPositiveButton(
+                "Ok",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        startActivity(new Intent(Quiz.this, LoggedIn.class));
+                    }
+                }
+        );
+        AlertDialog showDialog = AlertDialog.create();
+        showDialog.show();
+    }
 
     private void Start()
     {
-        VolgendeVraag.setText("StartQuiz");
+
         Keuze1.setVisibility(View.GONE);
         Keuze2.setVisibility(View.GONE);
         Keuze3.setVisibility(View.GONE);
         Keuze4.setVisibility(View.GONE);
+    }
+
+    //Methode van de back button op je smartphone
+    @Override
+    public void onBackPressed() {
+
+
+        alertDialog("Opgelet!","Weet je zeker dat je wilt stoppen?");
+    }
+
+    //Dialoogscherm om te vragen of gebruiker wilt stoppen met spelen?
+    //Gebruikt in onBackPressed() en back button in de actionbar
+    private void alertDialog(String title, String message)
+    {
+        AlertDialog.Builder AlertDialog = new AlertDialog.Builder(this);
+        AlertDialog.setTitle(title);
+        AlertDialog.setMessage(message);
+        AlertDialog.setPositiveButton(
+                "Ja",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Score = 0;
+                        gebruikteVragen = " ";
+                        VraagTeller = 0;
+                        startActivity(new Intent(Quiz.this, LoggedIn.class));
+
+                    }
+                }
+        );
+        AlertDialog.setNegativeButton(
+                "Nee",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }
+        );
+        AlertDialog showDialog = AlertDialog.create();
+        showDialog.show();
     }
 }

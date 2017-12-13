@@ -1,3 +1,6 @@
+/*
+* User kiest categorie van zijn spel
+ */
 package com.example.gebruiker.quiznativeapp.feature;
 
 
@@ -25,7 +28,7 @@ public class Categorie extends AppCompatActivity {
 
         initCategorieArray();
 
-
+        //Toolbar instellen met back-button
         Toolbar toolbar = findViewById(R.id.actionbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -57,6 +60,7 @@ public class Categorie extends AppCompatActivity {
         onClickListeners();
     }
 
+    //OnClickListeneners van alle buttons
     private void onClickListeners()
     {
         Categoriën[0].setOnClickListener(new View.OnClickListener() {

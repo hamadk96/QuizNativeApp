@@ -10,4 +10,95 @@
         android:id="@+id/actionbar"
         />
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/actionbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/lblTitelProfiel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="30sp"
+                android:textColor="#f111"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Verander gebruikersnaam"
+                android:textSize="18sp"
+                android:textColor="#f111"
+                android:textStyle="bold"/>
+
+            <EditText
+                android:id="@+id/txtNieuwGebruikersnaam"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text=""
+                android:layout_marginTop="15dp"/>
+
+            <Button
+                android:id="@+id/btnVeranderUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Gebruikersnaam veranderen"
+                android:layout_marginTop="15dp"/>
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Verandere Passwoord"
+                android:textSize="18sp"
+                android:textColor="#f111"
+                android:textStyle="bold"
+                android:layout_marginTop="40dp"
+                />
+
+            <EditText
+                android:id="@+id/txtOudePasswoord"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text=""
+                android:layout_marginTop="15dp"/>
+
+            <EditText
+                android:id="@+id/txtNieuwePasswoord"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text=""
+                android:layout_marginTop="15dp"/>
+
+            <EditText
+                android:id="@+id/txtNieuwePasswoord2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text=""
+                android:layout_marginTop="15dp"/>
+
+            <Button
+                android:id="@+id/btnVeranderPasswoord"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Passwoord veranderen"
+                android:layout_marginTop="15dp"/>
+        </LinearLayout>
+    </ScrollView>
+
 </android.support.constraint.ConstraintLayout>

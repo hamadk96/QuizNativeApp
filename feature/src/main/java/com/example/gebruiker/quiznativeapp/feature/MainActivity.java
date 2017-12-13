@@ -2,7 +2,9 @@ package com.example.gebruiker.quiznativeapp.feature;
 
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -42,7 +44,11 @@ public class MainActivity extends AppCompatActivity{
 
 
         Gebruikersnaam = findViewById(R.id.txtGebruikersNaam);
+        Gebruikersnaam.setHint("Gebruikersnaam");
+
         Passwoord = findViewById(R.id.txtPasswoord);
+        Passwoord.setHint("Passwoord");
+
         Error = findViewById(R.id.lblError);
 
         Toolbar toolbar = findViewById(R.id.actionbar);
@@ -50,12 +56,7 @@ public class MainActivity extends AppCompatActivity{
         //getSupportActionBar().setDisplayShowHomeEnabled(true);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Gebruikersnaam.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                //Gebruikersnaam.setText("");
-            }
-        });
+
 
         //Clickevent voor de "Login" button
         Login = findViewById(R.id.btnLogin);
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity{
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.i("Fail", error.toString());
+                        alertDialog();
                     }
                 }) {
                     //adding parameters to the request
@@ -121,5 +122,24 @@ public class MainActivity extends AppCompatActivity{
         });
 
 
+    }
+
+    private void alertDialog()
+    {
+    android.support.v7.app.AlertDialog.Builder AlertDialog = new AlertDialog.Builder(this);
+        AlertDialog.setTitle("Oops");
+        AlertDialog.setMessage("Er is een probleem met de connectie.");
+        AlertDialog.setPositiveButton(
+                "Ok",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }
+        );
+
+        AlertDialog showDialog = AlertDialog.create();
+        showDialog.show();
     }
 }
