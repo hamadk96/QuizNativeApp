@@ -52,7 +52,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Gebruikersnaam veranderen"
-                android:layout_marginTop="15dp"/>
+                android:layout_marginTop="15dp"
+                android:textColor="#FFFF"
+                android:backgroundTint="#F1423D"/>
 
             <TextView
                 android:id="@+id/textView6"
@@ -97,6 +99,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Passwoord veranderen"
+                android:textColor="#FFFF"
+                android:backgroundTint="#F1423D"
                 android:layout_marginTop="15dp"/>
         </LinearLayout>
     </ScrollView>

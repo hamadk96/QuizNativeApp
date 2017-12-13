@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.gebruiker.quiznativeapp.feature.Quiz">
+
     <include
         layout = "@layout/actionbar_mainactivity"
         android:id="@+id/actionbar"

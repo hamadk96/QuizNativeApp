@@ -73,6 +73,7 @@ public class LoggedIn extends AppCompatActivity {
             public void onClick(View view) {
                 OptieLijst = findViewById(R.id.frgOptieLijst);
                 OptieLijst.setVisibility(View.GONE);
+                IsButtonOptiesClicked = false;
             }
         });
 

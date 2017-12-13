@@ -3,7 +3,9 @@ package com.example.gebruiker.quiznativeapp.feature;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Looper;
+import android.graphics.Color;
+import android.graphics.ColorSpace;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,16 +17,12 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.StringRequestListener;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,7 +34,7 @@ public class Quiz extends AppCompatActivity {
     private String gebruikteVragen = "random";
     private Integer VraagTeller = 0;
     private String JuistAntwoord = "";
-    private int Score = 0;
+    private Integer Score = 0;
     private Button VolgendeVraag;
     private TextView VraagNummer;
     private TextView Vraag;
@@ -45,6 +43,7 @@ public class Quiz extends AppCompatActivity {
     private RadioButton Keuze3;
     private RadioButton Keuze4;
     private String getVraagURL = "http://inifruits.be/php/quizVraag.php";
+    private String SendScoreURL = "http://inifruits.be/php/sendScore.php";
 
 
 
@@ -115,12 +114,14 @@ public class Quiz extends AppCompatActivity {
             Keuze2.setVisibility(View.VISIBLE);
             Keuze3.setVisibility(View.VISIBLE);
             Keuze4.setVisibility(View.VISIBLE);
+            VolgendeVraag.setBackgroundColor(ContextCompat.getColor(this,R.color.black));
             VolgendeVraag.setText("Volgendre vraag");
 
             getQuestion(requestQueue);
         }else{
             if(VraagTeller < 15){
                 if(VraagTeller == 14){
+                    VolgendeVraag.setBackgroundColor(ContextCompat.getColor(this,R.color.red));
                     VolgendeVraag.setText("Einde");
 
                 }
@@ -128,6 +129,7 @@ public class Quiz extends AppCompatActivity {
                 getQuestion(requestQueue);
             }
             else{
+                sendScore(requestQueue);
                 alertDialog(false);
             }
         }
@@ -234,7 +236,8 @@ public class Quiz extends AppCompatActivity {
 
     private void Start()
     {
-
+        VolgendeVraag.setBackgroundColor(ContextCompat.getColor(this,R.color.green ));
+        VolgendeVraag.setTextColor(ContextCompat.getColor(this,R.color.textColor));
         Keuze1.setVisibility(View.GONE);
         Keuze2.setVisibility(View.GONE);
         Keuze3.setVisibility(View.GONE);
@@ -280,5 +283,37 @@ public class Quiz extends AppCompatActivity {
         );
         AlertDialog showDialog = AlertDialog.create();
         showDialog.show();
+    }
+
+    private void sendScore(final RequestQueue requestQueue)
+    {
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.POST,
+                SendScoreURL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        alertDialog(true);
+                    }
+                }
+        ){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> params = new HashMap<>();
+                params.put("score", Score.toString());
+                params.put("username",LoggedIn.Gebruiker.toLowerCase());
+                params.put("categorie",Categorie.Categorie);
+                params.put("locatie","undefined");
+
+                return params;
+            }
+        };
+        requestQueue.add(stringRequest);
     }
 }

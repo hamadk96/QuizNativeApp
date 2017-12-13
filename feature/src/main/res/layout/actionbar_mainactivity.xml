@@ -6,7 +6,9 @@
     android:textAlignment="center"
     android:layout_centerHorizontal="true"
     android:layout_alignParentTop="true"
+
     app:theme = "@style/actionbar"
+
     >
 
 
